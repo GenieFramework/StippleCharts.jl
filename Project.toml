@@ -1,0 +1,13 @@
+name = "StippleApexCharts"
+uuid = "30ddb3f0-912f-4f34-9804-e4bb31290777"
+authors = ["Adrian Salceanu <e@essenciary.com>"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
