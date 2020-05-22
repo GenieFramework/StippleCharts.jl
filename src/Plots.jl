@@ -5,6 +5,8 @@ import DataFrames
 import Genie, Stipple
 import Genie.Renderer.Html: HTMLString, normal_element
 
+using Stipple
+
 Genie.Renderer.Html.register_normal_element("apexchart", context = @__MODULE__)
 
 Base.@kwdef mutable struct PlotOptions
@@ -45,6 +47,7 @@ Base.@kwdef mutable struct PlotOptions
   stroke_curve::Symbol = :smooth
   stroke_show::Bool = true
   stroke_width::Int = 2
+  stroke_colors::Vector{String} = String["transparent"]
   subtitle_text::String = ""
   subtitle_align::Symbol = :left
   subtitle_style_font_size::String = "12px"
@@ -89,7 +92,7 @@ Base.@kwdef mutable struct PlotSeries
   plotdata::PlotData = PlotData()
 end
 
-function plot(fieldname;
+function plot(fieldname::Symbol;
               options::Union{Symbol,Nothing} = nothing,
               args...) :: String
 
@@ -104,6 +107,28 @@ function plot(fieldname;
   Genie.Renderer.Html.div() do
     apexchart(; args..., NamedTuple{k}(v)...)
   end
+end
+
+#===#
+
+function Base.parse(::Type{Vector{PlotSeries}}, d::Vector{Any})
+  [PlotSeries(name = x["name"], data = x["data"]) for x in d]
+end
+
+function Base.parse(::Type{PlotSeries}, x::Dict{String,Any})
+  PlotSeries(name = x["name"], data = x["data"])
+end
+
+function Base.parse(::Type{PlotData}, x::Vector{Any})
+  PlotData(x)
+end
+
+#===#
+
+function Stipple.watch(vue_app_name::String, fieldtype::R{PlotSeries}, fieldname::Symbol, channel::String, model::M)::String where {M<:ReactiveModel}
+  string(vue_app_name, raw".\$watch('", fieldname, "', function(newVal, oldVal){
+
+  });\n\n")
 end
 
 #===#
@@ -193,7 +218,8 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     :stroke => Dict(
       :curve => po.stroke_curve,
       :show => po.stroke_show,
-      :width => po.stroke_width
+      :width => po.stroke_width,
+      :colors => po.stroke_colors
     ),
     :subtitle => Dict(
       :align => po.subtitle_align,
