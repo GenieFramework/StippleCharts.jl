@@ -7,10 +7,12 @@ import Genie.Renderer.Html: HTMLString, normal_element
 
 using Stipple
 
+export PlotOptions, PlotData, PlotSeries, plot
+
 Genie.Renderer.Html.register_normal_element("apexchart", context = @__MODULE__)
 
 Base.@kwdef mutable struct PlotOptions
-  chart_animations_enabled::Bool = true
+  chart_animations_enabled::Bool = false
   chart_animations_easing::Symbol = :easeinout
   chart_animations_speed::Int = 800
   chart_background::String = "#fff"
@@ -24,13 +26,13 @@ Base.@kwdef mutable struct PlotOptions
   chart_sparkline_enabled::Bool = false
   chart_stacked::Bool = false
   chart_stack_type::String = "normal"
-  chart_toolbar_show::Bool = true
-  chart_type::Symbol = :bubble
+  chart_toolbar_show::Bool = false
+  chart_type::Symbol = :line
   chart_width::Union{Int,String} = "100%"
   chart_zoom_enabled::Bool = true
   chart_zoom_type::Symbol = :xy
   colors::Vector{String} = ["#2E93fA", "#66DA26", "#546E7A", "#E91E63", "#FF9800"]
-  data_labels_enabled::Bool = true
+  data_labels_enabled::Bool = false
   fill_opacity::Float64 = 1.0
   grid_show::Bool = true
   labels::Vector{String} = String[]
@@ -43,7 +45,8 @@ Base.@kwdef mutable struct PlotOptions
   plot_options_bar_ending_shape::Symbol = :flat
   plot_options_bar_column_width::String = "100%"
   plot_options_bar_data_labels_position::Symbol = :center
-  plot_options_bubble_min_bubble_radius::Int = 10
+  plot_options_bubble_min_bubble_radius::Union{Int,Symbol} = :undefined
+  plot_options_bubble_max_bubble_radius::Union{Int,Symbol} = :undefined
   stroke_curve::Symbol = :smooth
   stroke_show::Bool = true
   stroke_width::Int = 2
@@ -62,15 +65,13 @@ Base.@kwdef mutable struct PlotOptions
   tooltip_enable::Bool = true
   xaxis_type::Symbol = :category
   xaxis_categories::Vector{String} = String[]
-  xaxis_tick_amount::Int = 10
-  xaxis_max::Int = 1_000
-  xaxis_min::Int = 0
+  xaxis_tick_amount::Union{Int,Float64,Symbol} = :undefined
+  xaxis_max::Union{Int,Float64,Symbol} = :undefined
+  xaxis_min::Union{Int,Float64,Symbol} = :undefined
   xaxis_labels_show::Bool = true
-  yaxis_type::Symbol = :category
-  yaxis_categories::Vector{String} = String[]
-  yaxis_tick_amount::Int = 10
-  yaxis_max::Int = 1_000
-  yaxis_min::Int = 0
+  yaxis_tick_amount::Union{Int,Float64,Symbol} = :undefined
+  yaxis_max::Union{Int,Float64,Symbol} = :undefined
+  yaxis_min::Union{Int,Float64,Symbol} = :undefined
   yaxis_labels_show::Bool = true
 end
 
@@ -150,7 +151,7 @@ function Stipple.render(psv::Vector{PlotSeries}, fieldname::Union{Symbol,Nothing
 end
 
 function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = nothing)
-  Dict(
+  val = Dict(
     :chart => Dict(
       :animations => Dict(
         :enabled => po.chart_animations_enabled,
@@ -212,7 +213,8 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
         )
       ),
       :bubble => Dict(
-        :minBubbleRadius => po.plot_options_bubble_min_bubble_radius
+        :minBubbleRadius => po.plot_options_bubble_min_bubble_radius,
+        :maxBubbleRadius => po.plot_options_bubble_max_bubble_radius
       )
     ),
     :stroke => Dict(
@@ -256,9 +258,7 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
       )
     ),
     :yaxis => Dict(
-      :categories => po.yaxis_categories,
       :tickAmount => po.yaxis_tick_amount,
-      :type => po.yaxis_type,
       :max => po.yaxis_max,
       :min => po.yaxis_min,
       :labels => Dict(
@@ -266,6 +266,8 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
       )
     )
   )
+
+  replace(Genie.Renderer.Json.JSONParser.json(val), "\"undefined\""=>"undefined")
 end
 
 # #===#
