@@ -1,4 +1,4 @@
-module Plots
+module Charts
 
 using Revise
 import DataFrames

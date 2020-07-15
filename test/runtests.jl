@@ -1,6 +1,6 @@
-using StippleApexCharts
+using StippleCharts
 using Test
 
-@testset "StippleApexCharts.jl" begin
+@testset "StippleCharts.jl" begin
     # Write your own tests here.
 end

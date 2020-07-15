@@ -1,4 +1,4 @@
-module StippleApexCharts
+module StippleCharts
 
 using Revise
 
@@ -32,7 +32,7 @@ end
 
 #===#
 
-include("Plots.jl")
+include("Charts.jl")
 
 function __init__()
   push!(Stipple.DEPS, deps)
