@@ -13,7 +13,7 @@ beautiful, responsive, reactive, high performance interactive data dashboards in
 ## Installation
 
 ```julia
-pkg> add https://github.com/GenieFramework/StippleCharts.jl
+pkg> add StippleCharts
 ```
 
 ## Demos
