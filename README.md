@@ -1,8 +1,11 @@
 # StippleCharts
 
-StippleCharts.jl is a library of reactive charts for [Stipple.jl](https://github.com/GenieFramework/Stipple.jl).
+`StippleCharts` is a library of reactive charts for [Stipple.jl](https://github.com/GenieFramework/Stipple.jl).
 
-StippleCharts.jl, together with Stipple.jl, StippleUI.jl and Genie.jl provide a powerful and complete solution for building
+`StippleCharts.jl`, together with
+[Stipple.jl](https://github.com/GenieFramework/Stipple.jl),
+[StippleUI.jl](https://github.com/GenieFramework/StippleUI.jl) and
+[Genie.jl](https://github.com/GenieFramework/Genie.jl) provide a powerful and complete solution for building
 beautiful, responsive, reactive, high performance interactive data dashboards in pure Julia.
 
 `StippleCharts` provides access to multiple multiple types of reactive charts components, including line, bar, scatter, bubble, pie, donut, and column.
