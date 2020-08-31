@@ -1,6 +1,5 @@
 module Charts
 
-using Revise
 import DataFrames
 import Genie, Stipple
 import Genie.Renderer.Html: HTMLString, normal_element
