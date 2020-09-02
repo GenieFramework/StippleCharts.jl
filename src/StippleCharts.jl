@@ -1,7 +1,5 @@
 module StippleCharts
 
-using Revise
-
 import Genie
 import Stipple
 
