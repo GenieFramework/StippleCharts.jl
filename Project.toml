@@ -11,7 +11,7 @@ Stipple = "4acbeb90-81a0-11ea-1966-bdaff8155998"
 [compat]
 DataFrames = "0.21"
 Genie = "1"
-Stipple = "0"
+Stipple = "0.4"
 julia = "1"
 
 [extras]
