@@ -2,6 +2,7 @@ module StippleCharts
 
 import Genie
 import Stipple
+using Stipple.Reexport
 
 #===#
 
@@ -31,6 +32,7 @@ end
 #===#
 
 include("Charts.jl")
+@reexport using .Charts
 
 function __init__()
   push!(Stipple.DEPS, deps)
