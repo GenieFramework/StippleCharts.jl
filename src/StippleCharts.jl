@@ -24,8 +24,8 @@ function deps() :: String
   end
 
   string(
-    Genie.Renderer.Html.script(src="/js/stipple/apexcharts.min.js"),
-    Genie.Renderer.Html.script(src="/js/stipple/vue-apexcharts.min.js")
+    Genie.Renderer.Html.script(src="$(Genie.config.base_path)js/stipple/apexcharts.min.js"),
+    Genie.Renderer.Html.script(src="$(Genie.config.base_path)js/stipple/vue-apexcharts.min.js")
   )
 end
 
