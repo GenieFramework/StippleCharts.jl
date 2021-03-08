@@ -8,6 +8,8 @@ using Stipple
 
 export PlotOptions, PlotData, PlotSeries, plot
 
+const DEFAULT_WRAPPER = Genie.Renderer.Html.template
+
 Genie.Renderer.Html.register_normal_element("apexchart", context = @__MODULE__)
 
 Base.@kwdef mutable struct PlotOptions
@@ -43,12 +45,31 @@ Base.@kwdef mutable struct PlotOptions
   legend_font_family::String = "Helvetica, Arial"
   no_data_text::String = ""
   plot_options_area_fill_to::Union{String,Symbol} = :origin
+
   plot_options_bar_horizontal::Bool = false
   plot_options_bar_ending_shape::Union{String,Symbol} = :flat
   plot_options_bar_column_width::String = "100%"
   plot_options_bar_data_labels_position::Union{String,Symbol} = :center
+
   plot_options_bubble_min_bubble_radius::Union{Int,Symbol} = :undefined
   plot_options_bubble_max_bubble_radius::Union{Int,Symbol} = :undefined
+
+  plot_options_pie_size::Union{Int,Symbol} = :undefined
+  plot_options_pie_start_angle::Int = 0
+  plot_options_pie_end_angle::Int = 360
+  plot_options_pie_expand_on_click::Bool = true
+  plot_options_pie_offset_x::Int = 0
+  plot_options_pie_offset_y::Int = 0
+  plot_options_pie_custom_scale::Int = 1
+  plot_options_pie_data_labels_offset::Int = 0
+  plot_options_pie_data_labels_min_angle_to_show_label::Int = 10
+  plot_options_pie_donut_size::Union{Int,String} = 65
+  plot_options_pie_donut_background::String = "transparent"
+  plot_options_pie_donut_labels_show::Bool = false
+  plot_options_pie_donut_labels_name::Dict = Dict()
+  plot_options_pie_donut_labels_value::Dict = Dict()
+  plot_options_pie_donut_labels_total::Dict = Dict()
+
   stroke_curve::Union{String,Symbol,Vector{String},Vector{Symbol}} = :smooth
   stroke_show::Bool = true
   stroke_width::Union{Int,Vector{Int}} = 2
@@ -97,6 +118,7 @@ end
 
 function plot(fieldname::Symbol;
               options::Union{Symbol,Nothing} = nothing,
+              wrap::Function = DEFAULT_WRAPPER,
               args...) :: String
 
   k = (Symbol(":series"),)
@@ -107,7 +129,7 @@ function plot(fieldname::Symbol;
     push!(v, options)
   end
 
-  Genie.Renderer.Html.div() do
+  wrap() do
     apexchart(; args..., NamedTuple{k}(v)...)
   end
 end
@@ -209,23 +231,6 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     :noData => Dict(
       :text => po.no_data_text
     ),
-    :plotOptions => Dict(
-      :area => Dict(
-        :fillTo => po.plot_options_area_fill_to
-      ),
-      :bar => Dict(
-        :horizontal => po.plot_options_bar_horizontal,
-        :endingShape => po.plot_options_bar_ending_shape,
-        :columnWidth => po.plot_options_bar_column_width,
-        :dataLabels => Dict(
-          :position => po.plot_options_bar_data_labels_position
-        )
-      ),
-      :bubble => Dict(
-        :minBubbleRadius => po.plot_options_bubble_min_bubble_radius,
-        :maxBubbleRadius => po.plot_options_bubble_max_bubble_radius
-      )
-    ),
     :stroke => Dict(
       :curve => po.stroke_curve,
       :show => po.stroke_show,
@@ -275,6 +280,64 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
       )
     )
   )
+
+  plot_options = if po.chart_type == :area
+    Dict(
+      :area => Dict(
+        :fillTo => po.plot_options_area_fill_to
+      )
+    )
+  elseif po.chart_type == :bar
+    Dict(
+      :bar => Dict(
+        :horizontal => po.plot_options_bar_horizontal,
+        :endingShape => po.plot_options_bar_ending_shape,
+        :columnWidth => po.plot_options_bar_column_width,
+        :dataLabels => Dict(
+          :position => po.plot_options_bar_data_labels_position
+        )
+      )
+    )
+  elseif po.chart_type == :bubble
+    Dict(
+      :bubble => Dict(
+        :minBubbleRadius => po.plot_options_bubble_min_bubble_radius,
+        :maxBubbleRadius => po.plot_options_bubble_max_bubble_radius
+      )
+    )
+  elseif po.chart_type == :pie
+    Dict(
+      :pie => Dict(
+        :size  => po.plot_options_pie_size,
+        :startAngle => po.plot_options_pie_start_angle,
+        :endAngle   => po.plot_options_pie_end_angle,
+        :expandOnClick => po.plot_options_pie_expand_on_click,
+        :offsetX    => po.plot_options_pie_offset_x,
+        :offsetY    => po.plot_options_pie_offset_y,
+        :customScale  => po.plot_options_pie_custom_scale,
+        :dataLabels => Dict(
+          :offset   => po.plot_options_pie_data_labels_offset,
+          :minAngleToShowLabel => po.plot_options_pie_data_labels_min_angle_to_show_label
+        ),
+        :donut => Dict(
+          :size => endswith(string(po.plot_options_pie_donut_size) |> strip, '%') ?
+                    string(po.plot_options_pie_donut_size) |> strip :
+                    (string(po.plot_options_pie_donut_size) |> strip) * "%",
+          :background => po.plot_options_pie_donut_background,
+          :labels => Dict(
+            :show => po.plot_options_pie_donut_labels_show,
+            :name => po.plot_options_pie_donut_labels_name,
+            :value => po.plot_options_pie_donut_labels_value,
+            :total => po.plot_options_pie_donut_labels_total
+          )
+        ),
+      )
+    )
+  else
+    Dict()
+  end
+
+  isempty(plot_options) || (val[:plotOptions] = plot_options)
 
   replace(Genie.Renderer.Json.JSONParser.json(val), "\"undefined\""=>"undefined")
 end
