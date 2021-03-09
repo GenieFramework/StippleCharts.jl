@@ -1,7 +1,7 @@
 name = "StippleCharts"
 uuid = "30ddb3f0-912f-4f34-9804-e4bb31290777"
 authors = ["Adrian Salceanu <e@essenciary.com>"]
-version = "0.5.0"
+version = "0.5.0-DEV"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
