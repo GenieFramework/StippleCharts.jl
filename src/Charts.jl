@@ -3,6 +3,7 @@ module Charts
 import DataFrames
 import Genie, Stipple
 import Genie.Renderer.Html: HTMLString, normal_element
+import Genie.Renderer.Js: Undefined, UNDEFINED
 
 using Stipple
 
@@ -51,10 +52,10 @@ Base.@kwdef mutable struct PlotOptions
   plot_options_bar_column_width::String = "100%"
   plot_options_bar_data_labels_position::Union{String,Symbol} = :center
 
-  plot_options_bubble_min_bubble_radius::Union{Int,Symbol} = :undefined
-  plot_options_bubble_max_bubble_radius::Union{Int,Symbol} = :undefined
+  plot_options_bubble_min_bubble_radius::Union{Int,Undefined} = UNDEFINED
+  plot_options_bubble_max_bubble_radius::Union{Int,Undefined} = UNDEFINED
 
-  plot_options_pie_size::Union{Int,Symbol} = :undefined
+  plot_options_pie_size::Union{Int,Undefined} = UNDEFINED
   plot_options_pie_start_angle::Int = 0
   plot_options_pie_end_angle::Int = 360
   plot_options_pie_expand_on_click::Bool = true
@@ -88,13 +89,13 @@ Base.@kwdef mutable struct PlotOptions
   tooltip_enable::Bool = true
   xaxis_type::Union{String,Symbol} = :category
   xaxis_categories::Vector{String} = String[]
-  xaxis_tick_amount::Union{Int,Float64,Symbol,String} = :undefined
-  xaxis_max::Union{Int,Float64,Symbol,String} = :undefined
-  xaxis_min::Union{Int,Float64,Symbol,String} = :undefined
+  xaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
+  xaxis_max::Union{Int,Float64,String,Undefined} = UNDEFINED
+  xaxis_min::Union{Int,Float64,String,Undefined} = UNDEFINED
   xaxis_labels_show::Bool = true
-  yaxis_tick_amount::Union{Int,Float64,Symbol,String} = :undefined
-  yaxis_max::Union{Int,Float64,Symbol,String} = :undefined
-  yaxis_min::Union{Int,Float64,Symbol,String} = :undefined
+  yaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
+  yaxis_max::Union{Int,Float64,String,Undefined} = UNDEFINED
+  yaxis_min::Union{Int,Float64,String,Undefined} = UNDEFINED
   yaxis_labels_show::Bool = true
 end
 
@@ -339,7 +340,7 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
 
   isempty(plot_options) || (val[:plotOptions] = plot_options)
 
-  replace(Genie.Renderer.Json.JSONParser.json(val), "\"undefined\""=>"undefined")
+  val
 end
 
 # #===#
