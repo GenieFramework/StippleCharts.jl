@@ -114,7 +114,7 @@ end
 
 Base.@kwdef mutable struct PlotSeries
   name::String = ""
-  plotdata::PlotData = PlotData()
+  plotdata::PlotData = PlotData(Any[])
 end
 
 function plot(fieldname::Symbol;
@@ -147,6 +147,10 @@ end
 
 function Base.parse(::Type{PlotData}, x::Vector{Any})
   PlotData(x)
+end
+
+function Base.parse(::Type{PlotOptions}, d::Dict{String,Any})
+  @warn "Not implemented" # todo: add parser
 end
 
 #===#
