@@ -150,7 +150,7 @@ function Base.parse(::Type{PlotData}, x::Vector{Any})
 end
 
 function Base.parse(::Type{PlotOptions}, d::Dict{String,Any})
-  @warn "Not implemented" # todo: add parser
+  error("Not implemented") # todo: add parser
 end
 
 #===#
