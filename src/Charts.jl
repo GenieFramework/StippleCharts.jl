@@ -3,7 +3,7 @@ module Charts
 import DataFrames
 import Genie, Stipple
 import Genie.Renderer.Html: HTMLString, normal_element
-import Genie.Renderer.Js: Undefined, UNDEFINED
+import Stipple: Undefined, UNDEFINED
 
 using Stipple
 
