@@ -33,24 +33,32 @@ Base.@kwdef mutable struct PlotOptions
   chart_width::Union{Int,String} = "100%"
   chart_zoom_enabled::Bool = true
   chart_zoom_type::Union{String,Symbol} = :xy
+
   colors::Vector{String} = ["#2E93fA", "#66DA26", "#0A557A", "#E91E63", "#FF9800"]
+
   data_labels_enabled::Bool = false
-  fill_opacity::Float64 = 1.0
+
+  fill_opacity::Union{Int,Float64} = 1.0
+
   grid_row_colors::Vector{String} = ["#EEEEEE", "transparent"]
-  grid_row_opacity::Float64 = 1.0
+  grid_row_opacity::Union{Int,Float64} = 1.0
   grid_show::Bool = true
+
   labels::Vector{String} = String[]
   legend_show::Bool = true
   legend_position::Union{String,Symbol} = :bottom
   legend_font_size::String = "14px"
   legend_font_family::String = "Helvetica, Arial"
+
   no_data_text::String = ""
+
   plot_options_area_fill_to::Union{String,Symbol} = :origin
 
-  plot_options_bar_horizontal::Bool = false
-  plot_options_bar_ending_shape::Union{String,Symbol} = :flat
+  plot_options_bar_border_radius::Int = 0
   plot_options_bar_column_width::String = "100%"
   plot_options_bar_data_labels_position::Union{String,Symbol} = :center
+  plot_options_bar_ending_shape::Union{String,Symbol} = :flat
+  plot_options_bar_horizontal::Bool = false
 
   plot_options_bubble_min_bubble_radius::Union{Int,Undefined} = UNDEFINED
   plot_options_bubble_max_bubble_radius::Union{Int,Undefined} = UNDEFINED
@@ -75,28 +83,36 @@ Base.@kwdef mutable struct PlotOptions
   stroke_show::Bool = true
   stroke_width::Union{Int,Vector{Int}} = 2
   stroke_colors::Vector{String} = String["#546E7A"]
+
   subtitle_text::String = ""
   subtitle_align::Union{String,Symbol} = :left
   subtitle_style_font_size::String = "12px"
+
   theme_mode::Union{String,Symbol} = :light
   theme_palette::Union{String,Symbol} = :palette1
+
   title_text::String = ""
   title_align::Union{String,Symbol} = :left
   title_margin::Int = 10
   title_style_font_size::String = "14px"
   title_style_font_weight::Union{Int,Symbol,String} = :bold
   title_style_color::String = "#263238"
+
   tooltip_enable::Bool = true
+
   xaxis_type::Union{String,Symbol} = :category
   xaxis_categories::Vector{String} = String[]
   xaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
   xaxis_max::Union{Int,Float64,String,Undefined} = UNDEFINED
   xaxis_min::Union{Int,Float64,String,Undefined} = UNDEFINED
   xaxis_labels_show::Bool = true
-  yaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
+
+  yaxis_decimals_in_float::Union{Int,Undefined} = UNDEFINED
+  yaxis_labels_show::Bool = true
   yaxis_max::Union{Int,Float64,String,Undefined} = UNDEFINED
   yaxis_min::Union{Int,Float64,String,Undefined} = UNDEFINED
-  yaxis_labels_show::Bool = true
+  yaxis_show::Bool = true
+  yaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
 end
 
 Base.@kwdef mutable struct PlotData{T<:Vector}
@@ -277,12 +293,14 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
       )
     ),
     :yaxis => Dict(
-      :tickAmount => po.yaxis_tick_amount,
-      :max => po.yaxis_max,
-      :min => po.yaxis_min,
+      :decimalsInFloat => po.yaxis_decimals_in_float,
       :labels => Dict(
         :show => po.yaxis_labels_show
-      )
+      ),
+      :max => po.yaxis_max,
+      :min => po.yaxis_min,
+      :show => po.yaxis_show,
+      :tickAmount => po.yaxis_tick_amount,
     )
   )
 
@@ -295,12 +313,13 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
   elseif po.chart_type == :bar
     Dict(
       :bar => Dict(
-        :horizontal => po.plot_options_bar_horizontal,
-        :endingShape => po.plot_options_bar_ending_shape,
+        :borderRadius => po.plot_options_bar_border_radius,
         :columnWidth => po.plot_options_bar_column_width,
         :dataLabels => Dict(
           :position => po.plot_options_bar_data_labels_position
-        )
+        ),
+        :endingShape => po.plot_options_bar_ending_shape,
+        :horizontal => po.plot_options_bar_horizontal
       )
     )
   elseif po.chart_type == :bubble
