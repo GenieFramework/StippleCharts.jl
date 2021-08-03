@@ -34,15 +34,17 @@ Base.@kwdef mutable struct PlotOptions
   chart_zoom_enabled::Bool = true
   chart_zoom_type::Union{String,Symbol} = :xy
 
-  colors::Vector{String} = ["#2E93fA", "#66DA26", "#0A557A", "#E91E63", "#FF9800"]
+  colors::Union{Vector{String},Undefined} = ["#2E93fA", "#66DA26", "#0A557A", "#E91E63", "#FF9800"]
 
   data_labels_enabled::Bool = false
 
   fill_opacity::Union{Int,Float64} = 1.0
 
-  grid_row_colors::Vector{String} = ["#EEEEEE", "transparent"]
+  grid_row_colors::Union{Vector{String},Undefined} = ["#EEEEEE", "transparent"]
   grid_row_opacity::Union{Int,Float64} = 1.0
   grid_show::Bool = true
+  grid_xaxis_lines_show::Bool = false
+  grid_yaxis_lines_show::Bool = false
 
   labels::Vector{String} = String[]
   legend_show::Bool = true
@@ -103,6 +105,7 @@ Base.@kwdef mutable struct PlotOptions
   xaxis_type::Union{String,Symbol} = :category
   xaxis_categories::Vector{String} = String[]
   xaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
+  xaxis_tick_placement::Union{String,Symbol} = :between # :on
   xaxis_max::Union{Int,Float64,String,Undefined} = UNDEFINED
   xaxis_min::Union{Int,Float64,String,Undefined} = UNDEFINED
   xaxis_labels_show::Bool = true
@@ -235,13 +238,26 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     :fill => Dict(
       :opacity => po.fill_opacity
     ),
+
+    # grid
     :grid => Dict(
       :show => po.grid_show,
       :row => Dict(
         :colors => po.grid_row_colors,
         :opacity => po.grid_row_opacity
+      ),
+      :xaxis => Dict(
+        :lines => Dict(
+          :show => po.grid_xaxis_lines_show
+        )
+      ),
+      :yaxis => Dict(
+        :lines => Dict(
+          :show => po.grid_yaxis_lines_show
+        )
       )
     ),
+
     :labels => po.labels,
     :legend => Dict(
       :position => po.legend_position,
@@ -285,6 +301,7 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     :xaxis => Dict(
       :categories => po.xaxis_categories,
       :tickAmount => po.xaxis_tick_amount,
+      :tickPlacement => po.xaxis_tick_placement,
       :type => po.xaxis_type,
       :max => po.xaxis_max,
       :min => po.xaxis_min,
