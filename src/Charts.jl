@@ -103,7 +103,7 @@ Base.@kwdef mutable struct PlotOptions
   tooltip_enable::Bool = true
 
   xaxis_type::Union{String,Symbol} = :category
-  xaxis_categories::Vector{String} = String[]
+  xaxis_categories::Union{Vector{String},Vector{Float64}} = String[]
   xaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
   xaxis_tick_placement::Union{String,Symbol} = :between # :on
   xaxis_max::Union{Int,Float64,String,Undefined} = UNDEFINED
@@ -116,6 +116,9 @@ Base.@kwdef mutable struct PlotOptions
   yaxis_min::Union{Int,Float64,String,Undefined} = UNDEFINED
   yaxis_show::Bool = true
   yaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
+
+  extra_properties::Dict = Dict()
+  extra_options::Dict = Dict()
 end
 
 Base.@kwdef mutable struct PlotData{T<:Vector}
@@ -321,6 +324,8 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     )
   )
 
+  isempty(po.extra_properties) || (val = merge(po.extra_properties, val))
+
   plot_options = if po.chart_type == :area
     Dict(
       :area => Dict(
@@ -378,6 +383,7 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     Dict()
   end
 
+  isempty(po.extra_options) || (plot_options = merge(po.extra_options, plot_options))
   isempty(plot_options) || (val[:plotOptions] = plot_options)
 
   val
