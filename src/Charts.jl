@@ -84,7 +84,7 @@ Base.@kwdef mutable struct PlotOptions
   stroke_curve::Union{String,Symbol,Vector{String},Vector{Symbol}} = :smooth
   stroke_show::Bool = true
   stroke_width::Union{Int,Vector{Int}} = 2
-  stroke_colors::Vector{String} = String["#546E7A"]
+  stroke_colors::Vector{String} = colors
 
   subtitle_text::String = ""
   subtitle_align::Union{String,Symbol} = :left
