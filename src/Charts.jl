@@ -96,19 +96,21 @@ Base.@kwdef mutable struct PlotOptions
   title_text::String = ""
   title_align::Union{String,Symbol} = :left
   title_margin::Int = 10
+  title_style_font_family::Union{String,Undefined} = UNDEFINED
   title_style_font_size::String = "14px"
   title_style_font_weight::Union{Int,Symbol,String} = :bold
   title_style_color::String = "#263238"
 
   tooltip_enable::Bool = true
 
-  xaxis_type::Union{String,Symbol} = :category
   xaxis_categories::Union{Vector{String},Vector{Float64}} = String[]
-  xaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
-  xaxis_tick_placement::Union{String,Symbol} = :between # :on
+  xaxis_decimals_in_float::Union{Int,Undefined} = UNDEFINED
+  xaxis_labels_show::Bool = true
   xaxis_max::Union{Int,Float64,String,Undefined} = UNDEFINED
   xaxis_min::Union{Int,Float64,String,Undefined} = UNDEFINED
-  xaxis_labels_show::Bool = true
+  xaxis_tick_amount::Union{Int,Float64,String,Undefined} = UNDEFINED
+  xaxis_tick_placement::Union{String,Symbol} = :between # :on
+  xaxis_type::Union{String,Symbol} = :category
 
   yaxis_decimals_in_float::Union{Int,Undefined} = UNDEFINED
   yaxis_labels_show::Bool = true
@@ -203,6 +205,7 @@ end
 
 function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = nothing)
   val = Dict(
+    # chart
     :chart => Dict(
       :animations => Dict(
         :enabled => po.chart_animations_enabled,
@@ -234,10 +237,13 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
         :type => po.chart_zoom_type
       )
     ),
+
     :colors => po.colors,
+
     :dataLabels => Dict(
       :enabled => po.data_labels_enabled
     ),
+
     :fill => Dict(
       :opacity => po.fill_opacity
     ),
@@ -262,21 +268,25 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     ),
 
     :labels => po.labels,
+
     :legend => Dict(
       :position => po.legend_position,
       :fontFamily => po.legend_font_family,
       :fontSize => po.legend_font_size,
       :show => po.legend_show
     ),
+
     :noData => Dict(
       :text => po.no_data_text
     ),
+
     :stroke => Dict(
       :curve => po.stroke_curve,
       :show => po.stroke_show,
       :width => po.stroke_width,
       :colors => po.stroke_colors
     ),
+
     :subtitle => Dict(
       :align => po.subtitle_align,
       :text => po.subtitle_text,
@@ -284,25 +294,31 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
         :fontSize => po.subtitle_style_font_size
       )
     ),
+
     :theme => Dict(
       :mode => po.theme_mode,
       :palette => po.theme_palette
     ),
+
     :title => Dict(
       :text => po.title_text,
       :align => po.title_align,
       :margin => po.title_margin,
       :style => Dict(
         :color => po.title_style_color,
+        :fontFamily => po.title_style_font_family,
         :fontSize => po.title_style_font_size,
         :fontWeight => po.title_style_font_weight
       )
     ),
+
     :tooltip => Dict(
       :enable => po.tooltip_enable
     ),
+
     :xaxis => Dict(
       :categories => po.xaxis_categories,
+      :decimalsInFloat => po.xaxis_decimals_in_float,
       :tickAmount => po.xaxis_tick_amount,
       :tickPlacement => po.xaxis_tick_placement,
       :type => po.xaxis_type,
@@ -312,6 +328,7 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
         :show => po.xaxis_labels_show
       )
     ),
+
     :yaxis => Dict(
       :decimalsInFloat => po.yaxis_decimals_in_float,
       :labels => Dict(
@@ -324,7 +341,7 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     )
   )
 
-  isempty(po.extra_properties) || (val = merge(po.extra_properties, val))
+  isempty(po.extra_properties) || (val = recursive_merge(val, po.extra_properties))
 
   plot_options = if po.chart_type == :area
     Dict(
@@ -383,13 +400,17 @@ function Stipple.render(po::PlotOptions, fieldname::Union{Symbol,Nothing} = noth
     Dict()
   end
 
-  isempty(po.extra_options) || (plot_options = merge(po.extra_options, plot_options))
+  plot_options = recursive_merge(plot_options, get(po.extra_properties, :plotOptions, Dict()))
+  isempty(po.extra_options) || (plot_options = recursive_merge(plot_options, po.extra_options))
   isempty(plot_options) || (val[:plotOptions] = plot_options)
 
   val
 end
 
 # #===#
+
+recursive_merge(x::AbstractDict...) = merge(recursive_merge, x...)
+recursive_merge(x...) = x[end]
 
 
 end
