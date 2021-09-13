@@ -136,12 +136,16 @@ function PlotData(data::Vector{T}) where {T}
   PlotData(data = data)
 end
 
+function PlotData(data...) where {T}
+  PlotData([data...])
+end
+
 Base.@kwdef mutable struct PlotSeries
   name::String = ""
   plotdata::PlotData = PlotData(Any[])
 end
 
-function plot(fieldname::Symbol;
+function plot(fieldname::Union{Symbol,String};
               options::Union{Symbol,Nothing} = nothing,
               wrap::Function = DEFAULT_WRAPPER,
               args...) :: String
