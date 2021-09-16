@@ -13,6 +13,10 @@ const DEFAULT_WRAPPER = Genie.Renderer.Html.template
 
 Genie.Renderer.Html.register_normal_element("apexchart", context = @__MODULE__)
 
+"""
+  PlotOptions
+A data structure representing the plot options.
+"""
 Base.@kwdef mutable struct PlotOptions
   chart_animations_enabled::Bool = false
   chart_animations_easing::Union{String,Symbol} = :easeinout
@@ -123,6 +127,10 @@ Base.@kwdef mutable struct PlotOptions
   extra_options::Dict = Dict()
 end
 
+"""
+  PlotData
+A data structure storing data for plotting.
+"""
 Base.@kwdef mutable struct PlotData{T<:Vector}
   data::T = T[]
   key::Union{Symbol,Nothing} = :data
@@ -132,6 +140,18 @@ function PlotData(data::DataFrames.DataFrame; key=:data)
   PlotData(key = key, data = [Array(r) for r in DataFrames.eachrow(data)])
 end
 
+"""
+  PlotData(data)
+Transform initial data in PlotData struct. 
+
+ # Examples
+ ```jldoctest
+ julia> vector = [1, 2, 3, 4];
+
+ julia> PlotData(vector)
+PlotData{Vector{Int64}}([1, 2, 3, 4], :data)
+```
+"""
 function PlotData(data::Vector{T}) where {T}
   PlotData(data = data)
 end
@@ -140,6 +160,10 @@ function PlotData(data...) where {T}
   PlotData([data...])
 end
 
+"""
+  PlotSeries
+A data structure to store PlotData struct with name.
+"""
 Base.@kwdef mutable struct PlotSeries
   name::String = ""
   plotdata::PlotData = PlotData(Any[])
