@@ -142,7 +142,7 @@ end
 
 """
   PlotData(data)
-Transform initial data in PlotData struct. 
+Transform initial data in PlotData struct.
 
  # Examples
  ```jldoctest
@@ -202,7 +202,7 @@ function Base.parse(::Type{PlotData}, x::Vector{Any})
 end
 
 function Base.parse(::Type{PlotOptions}, d::Dict{String,Any})
-  error("Not implemented") # todo: add parser
+  # error("Not implemented") # todo: add parser
 end
 
 #===#
