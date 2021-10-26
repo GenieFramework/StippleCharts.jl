@@ -1,17 +1,19 @@
 module Charts
 
+using Genie, Stipple
+
 import DataFrames
-import Genie, Stipple
 import Genie.Renderer.Html: HTMLString, normal_element
 import Stipple: Undefined, UNDEFINED
 
-using Stipple
 
 export PlotOptions, PlotData, PlotSeries, plot
 
 const DEFAULT_WRAPPER = Genie.Renderer.Html.template
 
-Genie.Renderer.Html.register_normal_element("apexchart", context = @__MODULE__)
+function __init__()
+  Genie.Renderer.Html.register_normal_element("apexchart", context = Genie.Renderer.Html)
+end
 
 """
   PlotOptions
@@ -183,7 +185,7 @@ function plot(fieldname::Union{Symbol,String};
   end
 
   wrap() do
-    apexchart(; args..., NamedTuple{k}(v)...)
+    Genie.Renderer.Html.apexchart(; args..., NamedTuple{k}(v)...)
   end
 end
 
