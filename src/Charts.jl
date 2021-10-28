@@ -199,11 +199,19 @@ function Base.parse(::Type{PlotSeries}, x::Dict{String,Any})
   PlotSeries(name = x["name"], data = x["data"])
 end
 
+function Base.convert(::Type{Vector{PlotSeries}}, a::Vector{Dict{String,Any}})
+  [parse(PlotSeries, x) for x in a]
+end
+
+function Base.parse(::Type{Dict{String,Any}}, ::PlotSeries)
+  # TODO: not implemented
+end
+
 function Base.parse(::Type{PlotData}, x::Vector{Any})
   PlotData(x)
 end
 
-function Base.parse(::Type{PlotOptions}, d::Dict{String,Any})
+function Base.parse(::Type{PlotOptions}, ::Dict{String,Any})
   # error("Not implemented") # todo: add parser
 end
 
