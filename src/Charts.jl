@@ -9,8 +9,6 @@ import Stipple: Undefined, UNDEFINED
 
 export PlotOptions, PlotData, PlotSeries, plot
 
-const DEFAULT_WRAPPER = Genie.Renderer.Html.template
-
 register_normal_element("apexchart", context = @__MODULE__)
 
 """
@@ -171,7 +169,6 @@ end
 
 function plot(fieldname::Union{Symbol,String};
               options::Union{Symbol,Nothing} = nothing,
-              wrap::Function = DEFAULT_WRAPPER,
               args...) :: String
 
   k = (Symbol(":series"),)
@@ -182,9 +179,7 @@ function plot(fieldname::Union{Symbol,String};
     push!(v, options)
   end
 
-  wrap() do
-    apexchart(; args..., NamedTuple{k}(v)...)
-  end
+  apexchart(; args..., NamedTuple{k}(v)...)
 end
 
 #===#

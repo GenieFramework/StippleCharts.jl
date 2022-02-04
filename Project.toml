@@ -1,7 +1,7 @@
 name = "StippleCharts"
 uuid = "30ddb3f0-912f-4f34-9804-e4bb31290777"
 authors = ["Adrian Salceanu <e@essenciary.com>"]
-version = "0.16"
+version = "0.17.0"
 
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
@@ -11,7 +11,7 @@ Stipple = "4acbeb90-81a0-11ea-1966-bdaff8155998"
 [compat]
 DataFrames = "1.0"
 Genie = "4"
-Stipple = "0.17, 0.18, 0.19"
+Stipple = "0.17, 0.18, 0.19, 0.20"
 julia = "1.6"
 
 [extras]
