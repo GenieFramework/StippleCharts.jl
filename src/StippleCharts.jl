@@ -13,7 +13,7 @@ const COMPONENTS = [:apexchart => :VueApexCharts]
 
 const assets_config = Genie.Assets.AssetsConfig(package = "StippleCharts.jl")
 
-function deps() :: String
+function deps() :: Vector{String}
   if ! Genie.Assets.external_assets(Stipple.assets_config)
 
     Genie.Router.route(Genie.Assets.asset_path(assets_config, :js, file="apexcharts.min")) do
@@ -30,10 +30,10 @@ function deps() :: String
 
   end
 
-  string(
+  [
     Genie.Renderer.Html.script(src="$(Genie.Assets.asset_path(assets_config, :js, file="apexcharts.min"))"),
     Genie.Renderer.Html.script(src="$(Genie.Assets.asset_path(assets_config, :js, file="vue-apexcharts.min"))")
-  )
+  ]
 end
 
 #===#
