@@ -10,6 +10,10 @@ beautiful, responsive, reactive, high performance interactive data dashboards in
 
 `StippleCharts` provides access to multiple multiple types of reactive charts components, including line, bar, scatter, bubble, pie, donut, and column.
 
+## Note:
+
+StippleCharts is no longer actively maintained in favour of StipplePlotly. We are trying to keep it usable, though, and to cover larger changes in the Stipple architecture.
+
 ## Installation
 
 ```julia
